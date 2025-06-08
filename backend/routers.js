@@ -6,7 +6,7 @@ import middle from "./middle.js";
 import { messages } from "./controllers/message.js";
 import { io } from "./index.js";
 const router = express.Router();
-const secretKey = "Tarnvir";
+const secretKey = "Tarnvir"; //just for learning purpose i made secret key here
 
 router.post('/signup', async (req, res) => {
     try {
@@ -88,8 +88,6 @@ router.get('/allemails', async (req, res) => {
     }
 });
 
-
-//will do
 router.get('/allmessages', middle, async (req, res) => {
     try {
         const { userr } = req;
@@ -110,8 +108,4 @@ router.get('/allmessages', middle, async (req, res) => {
     }
 });
 
-router.get('/gettinganid',middle,(req,res)=>{
-    const { userr } = req;
-    res.status(200).send(userr.userId);
-})
 export default router;
