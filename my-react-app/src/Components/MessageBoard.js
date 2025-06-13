@@ -4,12 +4,15 @@ import SideBar from './SideBar';
 import { useNavigate } from 'react-router-dom';
 import { Context } from '..';
 import { io } from 'socket.io-client';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPaperclip } from "@fortawesome/free-solid-svg-icons";
 export default function MessageBoard() {
 
     const { isAuthenticated, token, userid } = useContext(Context);
     const [messages, setMessages] = useState([]);
     const [inputValue, setInputValue] = useState('');
     const chatEndRef = useRef(null);
+
     const socket = io('http://localhost:4000');
     const navigate = useNavigate();
 
@@ -158,8 +161,9 @@ export default function MessageBoard() {
             borderRadius: '20px',
             cursor: 'pointer',
             fontSize: '15px',
-        },
-    };
+
+    },
+};
 
     return (
         <div style={styles.layout}>
@@ -194,6 +198,10 @@ export default function MessageBoard() {
                         onKeyDown={handleKeyPress}
                         style={styles.input}
                     />
+                    <label htmlFor="file-upload" style={{ cursor: "pointer", marginLeft: "8px", marginTop:"8px" }}>
+                        <FontAwesomeIcon icon={faPaperclip} />
+                    </label>
+
                     <button onClick={sendMessage} style={styles.sendButton}>Send</button>
                 </div>
             </div>

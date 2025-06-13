@@ -5,14 +5,14 @@ import cors from "cors";
 import { db } from "./db.js";
 
 import { Server } from 'socket.io';
-import { createServer } from "http";
+import { createServer } from "http"; //for http
 import router from "./routers.js";
 
-const app = express();
+const app = express();// for routes
 
 app.use(express.json());
 
-const server = createServer(app);
+const server = createServer(app);//When u need both  HTTP routes and real-time communication
 export const io = new Server(server, {
     cors: {
         origin: "*",
