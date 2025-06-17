@@ -6,6 +6,9 @@ import middle from "./middle.js";
 import { messages } from "./controllers/message.js";
 import { io } from "./index.js";
 const router = express.Router();
+import cloudinary from "./index.js";
+import multer from "multer";
+import fs from 'fs';
 const secretKey = "Tarnvir"; //just for learning purpose i made secret key here
 
 router.post('/signup', async (req, res) => {
@@ -77,6 +80,81 @@ router.post('/message', middle, async (req, res) => {
         res.status(500).send("An error occurred while processing your request.");
     }
 });
+
+//working
+
+const upload = multer({ dest: '../uploads/' }); // Temporary folder
+
+router.post('/photoSend', middle, upload.single('file'), async (req, res) => {
+  try {
+    const { to } = req.body;
+    const file = req?.file;
+    const { userr } = req;
+
+    if (!file) {
+      return res.status(400).send("Photo is not given!");
+    }
+
+    // Upload to Cloudinary
+    const cloudinaryResponse = await cloudinary.uploader.upload(file.path);
+
+    if (!cloudinaryResponse || cloudinaryResponse.error) {
+      console.error("Cloudinary error", cloudinaryResponse.error || "Unknown Cloudinary Error");
+      return res.status(500).send("Cloudinary upload failed.");
+    }
+
+    // Create new message with photo
+    const newMessage = await messages.create({
+      to,
+      from: userr.userId,
+      photo: {
+        public_id: cloudinaryResponse.public_id,
+        url: cloudinaryResponse.secure_url,
+      },
+    });
+
+    console.log(newMessage);
+
+    // Optional: io.emit("newMessage", newMessage);
+
+    // Remove file after upload
+    fs.unlinkSync(file.path);
+
+    res.status(200).send({ message: "success", userid: userr.userId, photoUrl: cloudinaryResponse.secure_url });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("An error occurred while processing your request.");
+  }
+});
+
+//deleteMe
+// router.post('/photoSend', middle, async (req, res) => {
+//     try {
+//         const { to } = req.body;
+//         const {file} = req.file;
+//         const { userr } = req;
+//         if (!file) {
+//             return res.status(400).send("photo is not given!");
+//         }
+
+//         const cloudinaryResponse = await cloudinary.uploader.upload(file.tempFilePath);
+//         if(!cloudinaryResponse || cloudinaryResponse.error){
+//             console.error("Cloudinary error",cloudinaryResponse.error || "Unknown Cloudinary Error");
+//         }
+//         const newMessage=await messages.create({ to, from: userr.userId,  photo: {
+//             public_id: cloudinaryResponse.public_id,
+//             url: cloudinaryResponse.secure_url,} 
+//         });
+//         console.log(newMessage);
+//         // io.emit("newMessage",newMessage);
+//         res.status(200).send({ message: "success", userid: userr.userId });
+
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).send("An error occurred while processing your request.");
+//     }
+// });
 
 router.get('/allemails', async (req, res) => {
     try {

@@ -162,8 +162,29 @@ export default function MessageBoard() {
             cursor: 'pointer',
             fontSize: '15px',
 
-    },
-};
+        },
+    };
+
+    //working on upload file
+    const handlePhoto = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('to', userid);
+
+        try {
+            await axios.post('http://localhost:4000/api/use/photoSend', formData, {
+                headers: {
+                    'auth-token': token,
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+        } catch (err) {
+            console.error("Error sending photo:", err);
+        }
+    };
 
     return (
         <div style={styles.layout}>
@@ -198,7 +219,7 @@ export default function MessageBoard() {
                         onKeyDown={handleKeyPress}
                         style={styles.input}
                     />
-                    <label htmlFor="file-upload" style={{ cursor: "pointer", marginLeft: "8px", marginTop:"8px" }}>
+                    <label onClick={handlePhoto} htmlFor="file-upload" style={{ cursor: "pointer", marginLeft: "8px", marginTop: "8px" }}>
                         <FontAwesomeIcon icon={faPaperclip} />
                     </label>
 

@@ -12,6 +12,14 @@ const auth=new Schema({
     message:{
         require:true,
         type:String
+    },
+    photo:{
+        public_id: {
+            type: String,
+        },
+        url: {
+            type: String,
+        },
     }
 })
 

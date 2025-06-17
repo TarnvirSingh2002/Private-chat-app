@@ -7,7 +7,9 @@ import { db } from "./db.js";
 import { Server } from 'socket.io';
 import { createServer } from "http"; //for http
 import router from "./routers.js";
-
+import { v2 as cloudinary } from 'cloudinary';
+import  env  from "dotenv";
+env.config();
 const app = express();// for routes
 
 app.use(express.json());
@@ -24,6 +26,14 @@ export const io = new Server(server, {
 app.use(cors());
 
 db();
+
+cloudinary.config({
+  cloud_name: "dsk094yoj",
+  api_key: 787433182838936,
+  api_secret: "yvC7YI-dCIMUMeDc4v2bTfGH8vw",
+});
+console.log(process.env.CLOUDINARY_CLOUD_NAME," ",process.env.CLOUDINARY_API_KEY," ",process.env.CLOUDINARY_API_SECRET);
+export default cloudinary;
 
 app.use('/api/use', router);
 
